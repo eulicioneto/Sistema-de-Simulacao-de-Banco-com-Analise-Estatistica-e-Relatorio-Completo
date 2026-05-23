@@ -1,14 +1,39 @@
-#include <stdio.h>
+/*Observações do que pode ser implementado:
+1. Variável Global de Salário para quando a conta for tipo SALÁRIO o usuário nao precisa digitar novamente o quanto ele ganha na função de depósito;
+2.
+ */
 
-#define NUM_CONTA 5;
+#include <stdio.h>
+#include <math.h>
+
 int lerCodigoTitular();
 int lerTipoConta();
 double lerSaldoInicial();
 double lerLimite(int tipoConta);
-void menuPrincipal();
+int menuPrincipal();
+double depositar(int tipoConta);
+void sacar();
+void transferir();
+void rendimentoMensal();
+void exibirExtrato();
+void exibirRelatorio();
 
-int main() {
-    
+//Constantes
+#define NUM_CONTAS               5
+#define SALARIO_MINIMO           1412.00
+#define LIMITE_NEGATIVO_SALARIO  500.00
+#define JUROS_CHEQUE_ESPECIAL    0.085
+#define JUROS_MORA               0.03
+#define RENDIMENTO_POUPANCA      0.005
+#define TAXA_CORRENTE            0.015
+#define TAXA_SALARIO             0.008
+
+// Acumuladores globais
+int    totalOperacoes = 0;
+double totalDepositado = 0;
+double totalSacado = 0;
+
+
     // Conta 1
     int numeroConta1 = 1001, codTitular1, tipoConta1;
     double saldo1, saldoInicial1, limiteCheque1;
@@ -29,17 +54,21 @@ int main() {
     int numeroConta5 = 1005, codTitular5, tipoConta5;
     double saldo5, saldoInicial5, limiteCheque5;
 
+
+
+int main() {
+
     //Cadastro da Conta1
-    printf("\n=== CADASTRAR CONTA 1 ===\n", numeroConta1);
+    printf("\n=== CADASTRAR CONTA 1 ===\n");
     
     codTitular1 = lerCodigoTitular();
     tipoConta1 = lerTipoConta();
-    saldoInicial1 = lerSaldo();
+    saldoInicial1 = lerSaldoInicial();
     saldo1 = saldoInicial1; 
     limiteCheque1 = lerLimite(tipoConta1);
 
     //Cadastro da Conta 2
-    printf("\n=== CADASTRAR CONTA 2 ===\n", numeroConta2);
+    printf("\n=== CADASTRAR CONTA 2 ===\n");
     
     do {
         codTitular2 = lerCodigoTitular();
@@ -49,12 +78,12 @@ int main() {
     } while(codTitular2 == codTitular1);
 
     tipoConta2 = lerTipoConta();
-    saldoInicial2 = lerSaldo();
+    saldoInicial2 = lerSaldoInicial();
     saldo2 = saldoInicial2;
     limiteCheque2 = lerLimite(tipoConta2);
 
     //Cadastro da Conta 3
-    printf("\n=== CADASTRAR CONTA 3 ===\n", numeroConta3);
+    printf("\n=== CADASTRAR CONTA 3 ===\n");
     
     do {
         codTitular3 = lerCodigoTitular();
@@ -64,12 +93,12 @@ int main() {
     } while(codTitular3 == codTitular1 || codTitular3 == codTitular2);
 
     tipoConta3 = lerTipoConta();
-    saldoInicial3 = lerSaldo();
+    saldoInicial3 = lerSaldoInicial();
     saldo3 = saldoInicial3;
     limiteCheque3 = lerLimite(tipoConta3);
 
     //Cadastro da Conta 4
-    printf("\n=== CADASTRAR CONTA 4 ===\n", numeroConta4);
+    printf("\n=== CADASTRAR CONTA 4 ===\n");
     
     do {
         codTitular4 = lerCodigoTitular();
@@ -84,7 +113,7 @@ int main() {
     limiteCheque4 = lerLimite(tipoConta4);
 
     //Cadastro da Conta 5
-    printf("\n=== CADASTRAR CONTA 5 ===\n", numeroConta5);
+    printf("\n=== CADASTRAR CONTA 5 ===\n");
     
     do {
         codTitular5 = lerCodigoTitular();
@@ -96,16 +125,110 @@ int main() {
             codTitular5 == codTitular3 || codTitular5 == codTitular4);
 
     tipoConta5 = lerTipoConta();
-    saldoInicial5 = lerSaldo();
+    saldoInicial5 = lerSaldoInicial();
     saldo5 = saldoInicial5;
     limiteCheque5 = lerLimite(tipoConta5);
 
     printf("\n=== TODAS AS 5 CONTAS FORAM CADASTRADAS COM SUCESSO! ===\n");
+    
+    int opcao;
 
+    do{
+
+        opcao = menuPrincipal();
+    
+    switch(opcao){
+
+    	case 0:
+    		printf("Encerrando e gerando o relatorio final.");
+    		break;
+		case 1: {
+			int numeroConta;
+			double valor;
+
+			printf("Digite o numero da conta de destino: ");
+			scanf("%d", &numeroConta);
+
+			if(numeroConta == numeroConta1){
+				
+				valor = depositar(tipoConta1);
+				
+				saldo1+=valor;
+				
+				totalDepositado+=valor;
+				
+				totalOperacoes++;
+				
+			}else if(numeroConta == numeroConta2){
+				
+				valor = depositar(tipoConta2);
+				
+				saldo2+=valor;
+				
+				totalDepositado+=valor;
+				
+				totalOperacoes++;
+				
+			}else if(numeroConta == numeroConta3){
+				
+				valor = depositar(tipoConta3);
+				
+				saldo3+=valor;
+				
+				totalDepositado+=valor;
+				
+				totalOperacoes++;
+				
+			}else if(numeroConta == numeroConta4){
+				
+				valor = depositar(tipoConta4);
+				
+				saldo4+=valor;
+				
+				totalDepositado+=valor;
+				
+				totalOperacoes++;
+				
+			}else if(numeroConta == numeroConta5){
+				
+				valor = depositar(tipoConta5);
+				
+				saldo5+=valor;
+				
+				totalDepositado+=valor;
+				
+				totalOperacoes++;
+				
+			}else{
+				printf("Numero Invalido.\n");
+			}
+			break;
+        }
+		case 2:
+			sacar();
+			break;
+		case 3:
+			transferir();
+			break;
+		case 4:
+			rendimentoMensal();
+			break;
+		case 5:
+			exibirExtrato();
+			break;
+		case 6:
+			exibirRelatorio();
+			break;
+		default:
+			printf("Opcao Invalida, digite novamente.\n");
+			break;
+
+        }
+    }while(opcao != 0);
+		
     return 0;
 
-    menuPrincipal();
-}
+	}
 
 
 int lerCodigoTitular() {
@@ -137,10 +260,10 @@ double lerSaldoInicial() {
     do {
         printf("Digite o saldo inicial: ");
         scanf("%lf", &saldo);
-        if(saldo < 0) {
-            printf("O saldo nao pode ser negativo!\n");
+        if(saldo <= 0) {
+            printf("O saldo precisa ser estritamente maior que zero!\n");
         }
-    } while(saldo < 0);
+    } while(saldo <= 0);
     return saldo;
 }
 
@@ -156,12 +279,15 @@ double lerLimite(int tipoConta) {
         } while(limite < 0);
         return limite;
     } else {
-        return 0.0; // Contas Poupança e Salário não têm limite
+        return 0.0; // Contas Poupanca e Salario nao tem Limite de Cheque
     }
 }
 
-void menuPrincipal(){
-
+// Menu Principal
+int menuPrincipal(){
+	
+	int opcao;
+	
     printf("\n========================================\n");
     printf("     SISTEMA BANCARIO - MENU PRINCIPAL    \n");
     printf("========================================\n");
@@ -173,5 +299,68 @@ void menuPrincipal(){
     printf("[6] Exibir relatorio geral\n");
     printf("[0] Encerrar e gerar relatorio final\n");
     printf("========================================\n");
+    scanf("%d", &opcao);
+		
+	return opcao;
 
 }
+
+// Função de Depósito
+double depositar(int tipoConta){
+		double deposito, valor_liquido;
+	   do{
+		   printf("Digite o valor do deposito: ");
+		   scanf("%lf", &deposito);
+		   if(deposito <= 0){
+			   printf("Valor Invalido.\n");
+		   }
+        }while(deposito <= 0);
+		   
+		   if(tipoConta == 1){
+			   valor_liquido = deposito * (1 - TAXA_CORRENTE);
+			   return valor_liquido;
+		   }else if(tipoConta == 2){
+            printf("Usuário Isento.");
+			   return deposito;
+		   }else{
+		   	
+			   if(deposito >= SALARIO_MINIMO){
+				   printf("Usuário Isento.");
+				   return deposito;
+			   }else{
+				   valor_liquido = deposito * ( 1 - TAXA_SALARIO );
+				   return valor_liquido;
+			   }
+		   }
+	   }	
+
+void sacar(){
+
+
+
+       }
+
+void transferir(){
+
+
+
+}
+
+void rendimentoMensal(){
+
+
+
+}
+
+void exibirExtrato(){
+
+
+
+}
+
+void exibirRelatorio(){
+
+
+
+}
+    
