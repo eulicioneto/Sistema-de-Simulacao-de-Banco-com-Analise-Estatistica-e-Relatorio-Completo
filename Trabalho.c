@@ -170,6 +170,8 @@ int main()
                 totalDepositado += valor;
 
                 totalOperacoes++;
+
+                printf("Saldo atual: %.2lf\n", saldo1);
             }
             else if (numeroConta == numeroConta2)
             {
@@ -181,6 +183,8 @@ int main()
                 totalDepositado += valor;
 
                 totalOperacoes++;
+
+                printf("Saldo atual: %.2lf\n", saldo2);
             }
             else if (numeroConta == numeroConta3)
             {
@@ -192,6 +196,8 @@ int main()
                 totalDepositado += valor;
 
                 totalOperacoes++;
+
+                printf("Saldo atual: %.2lf\n", saldo3);
             }
             else if (numeroConta == numeroConta4)
             {
@@ -203,6 +209,8 @@ int main()
                 totalDepositado += valor;
 
                 totalOperacoes++;
+
+                printf("Saldo atual: %.2lf\n", saldo4);
             }
             else if (numeroConta == numeroConta5)
             {
@@ -214,6 +222,8 @@ int main()
                 totalDepositado += valor;
 
                 totalOperacoes++;
+
+                printf("Saldo atual: %.2lf\n", saldo5);
             }
             else
             {
@@ -394,41 +404,31 @@ int menuPrincipal()
 // Função de Depósito
 double depositar(int tipoConta)
 {
-    double deposito, valor_liquido;
+    double deposito;
+    double valorLiquido;
+    double taxaAplicada;
+
     do
     {
         printf("Digite o valor do deposito: ");
         scanf("%lf", &deposito);
+
         if (deposito <= 0)
         {
             printf("Valor Invalido.\n");
         }
+
     } while (deposito <= 0);
 
-    if (tipoConta == 1)
-    {
-        valor_liquido = deposito * (1 - TAXA_CORRENTE);
-        return valor_liquido;
-    }
-    else if (tipoConta == 2)
-    {
-        printf("Usuário Isento.");
-        return deposito;
-    }
-    else
-    {
+    valorLiquido = calcularDeposito(tipoConta, deposito);
 
-        if (deposito >= SALARIO_MINIMO)
-        {
-            printf("Usuário Isento.");
-            return deposito;
-        }
-        else
-        {
-            valor_liquido = deposito * (1 - TAXA_SALARIO);
-            return valor_liquido;
-        }
-    }
+    taxaAplicada = deposito - valorLiquido;
+
+    printf("Valor bruto: %.2lf\n", deposito);
+    printf("Taxa aplicada: %.2lf\n", taxaAplicada);
+    printf("Valor liquido creditado: %.2lf\n", valorLiquido);
+
+    return valorLiquido;
 }
 
 void sacar(int tipoConta, int numeroConta)
