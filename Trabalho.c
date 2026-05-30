@@ -15,8 +15,11 @@ double depositar(int tipoConta);
 void sacar(int tipoConta, int numeroConta);
 void transferir();
 void rendimentoMensal();
-void exibirExtrato();
-void exibirRelatorio();
+void exibirExtrato(int numeroConta);
+int CalcularSaldo(double saldo);
+void exibirRelatorioGeral();
+void verificarTipoConta(int tipoConta, int *contasCorrente, int *contasPoupanca, int *contasSalario);
+int Teste();
 
 // Constantes
 #define NUM_CONTAS 5
@@ -55,7 +58,8 @@ double saldo5, saldoInicial5, limiteCheque5;
 
 int main()
 {
-
+    
+    if(Teste() != 0){
     // Cadastro da Conta1
     printf("\n=== CADASTRAR CONTA 1 ===\n");
 
@@ -128,7 +132,7 @@ int main()
             printf("Erro: Titular ja cadastrado em outra conta! Tente outro.\n");
         }
     } while (codTitular5 == codTitular1 || codTitular5 == codTitular2 ||
-             codTitular5 == codTitular3 || codTitular5 == codTitular4);
+        codTitular5 == codTitular3 || codTitular5 == codTitular4);
 
     tipoConta5 = lerTipoConta();
     saldoInicial5 = lerSaldoInicial();
@@ -136,7 +140,8 @@ int main()
     limiteCheque5 = lerLimite(tipoConta5);
 
     printf("\n=== TODAS AS 5 CONTAS FORAM CADASTRADAS COM SUCESSO! ===\n");
-
+    }
+    Teste();
     int opcao;
 
     do
@@ -255,17 +260,25 @@ int main()
             }
             break;
         }
-        case 3:
+        case 3:            
             transferir();
             break;
         case 4:
-            rendimentoMensal();
+            rendimentoMensal(numeroConta1,tipoConta1,&saldo1);
+            rendimentoMensal(numeroConta2,tipoConta2,&saldo2);
+            rendimentoMensal(numeroConta3,tipoConta3,&saldo3);
+            rendimentoMensal(numeroConta4,tipoConta4,&saldo4);
+            rendimentoMensal(numeroConta5,tipoConta5,&saldo5);
+
             break;
         case 5:
-            exibirExtrato();
+            printf("\n Digite o numero da conta: ");
+            int tipoConta = 0;
+            scanf("%d", &tipoConta);
+            exibirExtrato(tipoConta);
             break;
         case 6:
-            exibirRelatorio();
+            exibirRelatorioGeral();
             break;
         default:
             printf("Opcao Invalida, digite novamente.\n");
@@ -274,6 +287,28 @@ int main()
     } while (opcao != 0);
 
     return 0;
+}
+
+// Menu Principal
+int menuPrincipal()
+{
+    
+    int opcao;
+
+    printf("\n========================================\n");
+    printf("     SISTEMA BANCARIO - MENU PRINCIPAL    \n");
+    printf("========================================\n");
+    printf("[1] Depositar\n");
+    printf("[2] Sacar\n");
+    printf("[3] Transferir entre contas\n");
+    printf("[4] Aplicar rendimento mensal\n");
+    printf("[5] Exibir extrato de uma conta\n");
+    printf("[6] Exibir relatorio geral\n");
+    printf("[0] Encerrar e gerar relatorio final\n");
+    printf("========================================\n");
+    scanf("%d", &opcao);
+
+    return opcao;
 }
 
 int lerCodigoTitular()
@@ -343,27 +378,7 @@ double lerLimite(int tipoConta)
     }
 }
 
-// Menu Principal
-int menuPrincipal()
-{
 
-    int opcao;
-
-    printf("\n========================================\n");
-    printf("     SISTEMA BANCARIO - MENU PRINCIPAL    \n");
-    printf("========================================\n");
-    printf("[1] Depositar\n");
-    printf("[2] Sacar\n");
-    printf("[3] Transferir entre contas\n");
-    printf("[4] Aplicar rendimento mensal\n");
-    printf("[5] Exibir extrato de uma conta\n");
-    printf("[6] Exibir relatorio geral\n");
-    printf("[0] Encerrar e gerar relatorio final\n");
-    printf("========================================\n");
-    scanf("%d", &opcao);
-
-    return opcao;
-}
 
 // Função de Depósito
 double depositar(int tipoConta)
@@ -453,32 +468,32 @@ void sacar(int tipoConta, int numeroConta)
 
     // CONTA CORRENTE
     if (tipoConta == 1)
-{
-    if (saque > (saldoAtual + limiteAtual))
     {
-        printf("3 - Saldo insuficiente para o tipo da Conta.\n");
-        return;
+        if (saque > (saldoAtual + limiteAtual))
+        {
+            printf("3 - Saldo insuficiente para o tipo da Conta.\n");
+            return;
+        }
+        //Essa parte contêm um cálculo um pouco complicado, é bom estudar.
+
+        double saldoAntes;
+
+        saldoAntes = saldoAtual;
+
+        saldoAtual -= saque;
+
+        if (saldoAntes >= 0 && saldoAtual < 0)
+        {
+            double valorChequeEspecial;
+            double juros;
+
+            valorChequeEspecial = fabs(saldoAtual);
+
+            juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
+
+            saldoAtual -= juros;
+        }
     }
-    //Essa parte contêm um cálculo um pouco complicado, é bom estudar.
-
-    double saldoAntes;
-
-    saldoAntes = saldoAtual;
-
-    saldoAtual -= saque;
-
-    if (saldoAntes >= 0 && saldoAtual < 0)
-    {
-        double valorChequeEspecial;
-        double juros;
-
-        valorChequeEspecial = fabs(saldoAtual);
-
-        juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
-
-        saldoAtual -= juros;
-    }
-}
 
     // CONTA POUPANÇA
     else if (tipoConta == 2)
@@ -541,14 +556,243 @@ void transferir()
 {
 }
 
-void rendimentoMensal()
+void rendimentoMensal(int NumConta,int tipoConta, double *saldo)
 {
+    printf("---------------------------------\n");
+    printf("Numero da conta: %d\n",NumConta);
+    printf("Saldo de entrada: $%.2f\n",*saldo);
+    if(*saldo < 0){
+        *saldo *= 1.03;
+        printf("mora de 3%%, tornando o saldo mais negativo\n");
+        printf("Saldo com o rendimento aplicado: $%.2f\n",*saldo);
+    }
+    else if(tipoConta == 2){
+        *saldo *= 1.005;
+        printf("rendimento de 0,5%%\n");
+        printf("Saldo com o rendimento aplicado: $%.2f\n",*saldo);
+    }
+    else{
+        printf("Contas Corrente e Assalariadas nao recebem rendimento mensal.\n");
+    }
+    
 }
 
-void exibirExtrato()
+void exibirExtrato(int numeroConta)
 {
+
+    if (numeroConta == numeroConta1) {
+        printf("| Numero da conta: %d \n", numeroConta1);
+        printf("| Codigo Titular: %d\n", codTitular1);
+        printf("| Tipo: %d\n", tipoConta1);
+        printf("| Saldo atual: %.2f\n", saldo1);
+        printf("| Limite cheque: %.2f\n", limiteCheque1);
+
+        CalcularSaldo(saldo1);
+    }
+    else if (numeroConta == numeroConta2) {
+        printf("| Numero da conta: %d \n", numeroConta2);
+        printf("| Codigo Titular: %d\n", codTitular2);
+        printf("| Tipo: %d\n", tipoConta2);
+        printf("| Saldo atual: %.2f\n", saldo2);
+        printf("| Limite cheque: %.2f\n", limiteCheque2);
+
+        CalcularSaldo(saldo2);
+    }
+    else if (numeroConta == numeroConta3) {
+        printf("| Numero da conta: %d \n", numeroConta3);
+        printf("| Codigo Titular: %d\n", codTitular3);
+        printf("| Tipo: %d\n", tipoConta3);
+        printf("| Saldo atual: %.2f\n", saldo3);
+        printf("| Limite cheque: %.2f\n", limiteCheque3);
+
+        CalcularSaldo(saldo3);
+    }
+    else if (numeroConta == numeroConta4) {
+        printf("| Numero da conta: %d \n", numeroConta4);
+        printf("| Codigo Titular: %d\n", codTitular4);
+        printf("| Tipo: %d\n", tipoConta4);
+        printf("| Saldo atual: %.2f\n", saldo4);
+        printf("| Limite cheque: %.2f\n", limiteCheque4);
+
+        CalcularSaldo(saldo4);
+    }
+    else if (numeroConta == numeroConta5) {
+        printf("| Numero da conta: %d \n", numeroConta5);
+        printf("| Codigo Titular: %d\n", codTitular5);
+        printf("| Tipo: %d\n", tipoConta5);
+        printf("| Saldo atual: %.2f\n", saldo5);
+        printf("| Limite cheque: %.2f\n", limiteCheque5);
+
+        CalcularSaldo(saldo5);
+    }
+    else
+    {
+        printf("Numero de conta nao existente\n");
+    }
+    
+    
 }
 
-void exibirRelatorio()
-{
+// Uso exclusivo da função "exibirExtrato"
+int CalcularSaldo(double saldo) {
+
+    if (saldo >= 10 * SALARIO_MINIMO) {
+        printf("| Saude financeira: 4");
+        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        return 4;
+    }
+    else if (saldo >= 3 * SALARIO_MINIMO)
+    {
+        printf("| Saude financeira: 3");
+        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        return 3;
+    }
+    else if (saldo >= 0)
+    {
+        printf("| Saude financeira: 2");
+        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        return 2;
+    }
+    else if (saldo <= 0)
+    {
+        printf("| Saude financeira: 1");
+        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        return 1;
+        
+    } 
+
+    
 }
+
+void exibirRelatorioGeral()
+{
+    double mediaSaldos = (saldo1 + saldo2 + saldo3 + saldo4 + saldo5) / NUM_CONTAS;
+    double SomaSaldos = saldo1 + saldo2 + saldo3 + saldo4 + saldo5;
+    int ContasNegativas = 0;
+    printf("\n=== RELATORIO GERAL ===\n");
+    printf("Soma dos saldos: $%.2f\n", SomaSaldos);
+    printf("Media dos saldos: $%.2f\n", mediaSaldos);
+    
+    //Maior saldo
+    if(saldo1 >= saldo2 && saldo1 >= saldo3 && saldo1 >= saldo4 && saldo1 >= saldo5){
+        printf("-------------------------------\n");
+        printf("Conta com maior saldo: %d\n", codTitular1);
+        printf("Saldo: $%.2f\n", saldo1);
+        printf("-------------------------------\n");
+    }
+    else if(saldo2 >= saldo1 && saldo2 >= saldo3 && saldo2 >= saldo4 && saldo2 >= saldo5){
+        printf("-------------------------------\n");
+        printf("Conta com maior saldo: %d\n", codTitular2);
+        printf("Saldo: $%.2f\n", saldo2);  
+        printf("-------------------------------\n");
+    }
+    else if(saldo3 >= saldo1 && saldo3 >= saldo2 && saldo3 >= saldo4 && saldo3 >= saldo5){
+        printf("-------------------------------\n");
+        printf("Conta com maior saldo: %d\n", codTitular3);
+        printf("Saldo: $%.2f\n", saldo3);
+        printf("-------------------------------\n");
+    }
+    else if(saldo4 >= saldo1 && saldo4 >= saldo2 && saldo4 >= saldo3 && saldo4 >= saldo5){
+        printf("-------------------------------\n");
+        printf("Conta com maior saldo: %d\n", codTitular4);
+        printf("Saldo: $%.2f\n", saldo4);
+        printf("-------------------------------\n");
+    }
+    else{
+        printf("-------------------------------\n");
+        printf("Conta com maior saldo: %d\n", codTitular5);
+        printf("Saldo: $%.2f\n", saldo5);
+        printf("-------------------------------\n");
+    }
+
+    //Contar contas negativas
+    if(saldo1 < 0){
+        ContasNegativas++;
+    }
+    if(saldo2 < 0){
+        ContasNegativas++;
+    }
+    if(saldo3 < 0){
+        ContasNegativas++;
+    }
+    if(saldo4 < 0){
+        ContasNegativas++;
+    }
+    if(saldo5 < 0){
+        ContasNegativas++;
+    }
+    printf("Numero de contas com o saldo negativo: %d\n", ContasNegativas);
+
+    // Quantidade de tipo de contas
+    int ContasCorrente = 0;
+    int ContasPoupanca = 0;
+    int ContasSalario = 0;
+
+    verificarTipoConta(tipoConta1, &ContasCorrente, &ContasPoupanca, &ContasSalario);
+    verificarTipoConta(tipoConta2, &ContasCorrente, &ContasPoupanca, &ContasSalario);
+    verificarTipoConta(tipoConta3, &ContasCorrente, &ContasPoupanca, &ContasSalario);
+    verificarTipoConta(tipoConta4, &ContasCorrente, &ContasPoupanca, &ContasSalario);
+    verificarTipoConta(tipoConta5, &ContasCorrente, &ContasPoupanca, &ContasSalario);
+    
+    for(int i = 0; i < 35; i++){
+        printf("-");
+    } printf("\n");
+
+    printf("Quantidade de contas Corrente: %d\n", ContasCorrente);
+    printf("Quantidade de contas Poupanca: %d\n", ContasPoupanca);
+    printf("Quantidade de contas Salario: %d\n", ContasSalario);
+
+}
+
+// Função de uso exclusivo da função "exibirRelatorioGeral" para contar a quantidade de cada tipo de conta
+void verificarTipoConta(int tipoConta, int *contasCorrente, int *contasPoupanca, int *contasSalario){
+    if(tipoConta == 1){
+        (*contasCorrente)++;
+    }
+    else if(tipoConta == 2){
+        (*contasPoupanca)++;
+    }
+    else{
+        (*contasSalario)++;
+    }
+}
+
+int Teste(){
+     numeroConta1 = 1001; 
+     codTitular1 = 1001;
+     tipoConta1 = 1;
+     saldo1 = 2000;
+     saldoInicial1 = 2000; 
+     limiteCheque1 = 1000;
+
+     numeroConta2 = 1002; 
+     codTitular2 = 1002;
+     tipoConta2 = 2;
+     saldo2 = 1000;
+     saldoInicial2 = 1000; 
+     limiteCheque2 = 0;
+
+     numeroConta3 = 1003; 
+     codTitular3 = 1003;
+     tipoConta3 = 3;
+     saldo3 = 5;
+     saldoInicial3 = 1000; 
+     limiteCheque3 = 0;
+
+     numeroConta4 = 1004; 
+     codTitular4 = 1004;
+     tipoConta4 = 2;
+     saldo4 = 4000;
+     saldoInicial4 = 4000; 
+     limiteCheque4 = 0;
+
+     numeroConta5 = 1005; 
+     codTitular5 = 1005;
+     tipoConta5 = 3;
+     saldo5 = 5000;
+     saldoInicial5 = 5000; 
+     limiteCheque5 = 0;
+
+     return 0;
+}
+     
