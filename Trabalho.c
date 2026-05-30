@@ -6,14 +6,16 @@
 #include <stdio.h>
 #include <math.h>
 
+double calcularDeposito(int tipoContaDestino, double valor);
 int lerCodigoTitular();
+int validarSaque(int tipoConta, double saldoAtual, double limiteAtual, double saque);
 int lerTipoConta();
 double lerSaldoInicial();
 double lerLimite(int tipoConta);
 int menuPrincipal();
 double depositar(int tipoConta);
 void sacar(int tipoConta, int numeroConta);
-void transferir();
+void transferir(int tipoContaOrigem, int tipoContaDestino);
 void rendimentoMensal();
 void exibirExtrato(int numeroConta);
 int CalcularSaldo(double saldo);
@@ -22,7 +24,7 @@ void verificarTipoConta(int tipoConta, int *contasCorrente, int *contasPoupanca,
 int Teste();
 
 // Constantes
-#define NUM_CONTAS 5
+#define NUM_CONTAS 5 // Essa constante ainda nao foi utilizada!!!
 #define SALARIO_MINIMO 1412.00
 #define LIMITE_NEGATIVO_SALARIO 500.00
 #define JUROS_CHEQUE_ESPECIAL 0.085
@@ -163,7 +165,7 @@ int main()
             printf("Digite o numero da conta de destino: ");
             scanf("%d", &numeroConta);
 
-            if (numeroConta == numeroConta1)
+            if (numeroConta == numeroConta1) //Fazer uma funcao para identificar qual é a conta
             {
 
                 valor = depositar(tipoConta1);
@@ -260,8 +262,30 @@ int main()
             }
             break;
         }
-        case 3:            
-            transferir();
+        case 3: 
+        {           
+            int numeroContaOrigem, numeroContaDestino;
+
+            printf("Digite o numero da conta de origem: ");
+            scanf("%d", &numeroContaOrigem);
+
+            printf("Digite o numero da conta de destino: ");
+            scanf("%d", &numeroContaDestino);
+
+            if ((numeroContaOrigem != numeroContaDestino) &&
+                (numeroContaDestino == numeroConta1 || numeroContaDestino == numeroConta2 ||
+                numeroContaDestino == numeroConta3 || numeroContaDestino == numeroConta4 ||
+                numeroContaDestino == numeroConta5) &&
+                (numeroContaOrigem == numeroConta1 || numeroContaOrigem == numeroConta2 ||
+                numeroContaOrigem == numeroConta3 || numeroContaOrigem == numeroConta4 ||
+                numeroContaOrigem == numeroConta5))
+            {
+
+                transferir(numeroContaOrigem, numeroContaDestino);
+            }else{
+                printf("Conta de origem ou destino invalida, ou as contas sao iguais. Tente novamente.\n");
+            }
+}
             break;
         case 4:
             rendimentoMensal(numeroConta1,tipoConta1,&saldo1);
@@ -440,7 +464,7 @@ void sacar(int tipoConta, int numeroConta)
     } while (saque <= 0);
 
     // Identificar saldo e limite da conta
-    if (numeroConta == numeroConta1)
+    if (numeroConta == numeroConta1) // Fazer uma funcao para identificar qual é a conta, para nao precisar ficar repetindo esse if-else toda hora
     {
         saldoAtual = saldo1;
         limiteAtual = limiteCheque1;
@@ -552,8 +576,187 @@ void sacar(int tipoConta, int numeroConta)
     printf("Saldo atual: %.2lf\n", saldoAtual);
 } //Pelo Visto, ta certo.
 
-void transferir()
+void transferir(int numeroContaOrigem, int numeroContaDestino)
 {
+    double valorTransferencia;
+    double saldoContaOrigem;
+    double limiteAtual;
+    int tipoContaOrigem;
+
+    //Mudar o nome da variavel saldoAtual para saldoContaOrigem.
+
+    do
+    {
+        printf("Digite o valor da transferencia: ");
+        scanf("%lf", &valorTransferencia);
+
+        if (valorTransferencia <= 0)
+        {
+            printf("2 - Valor Invalido.\n");
+        }
+
+    } while (valorTransferencia <= 0);
+
+    // Identificar conta origem
+    if (numeroContaOrigem == numeroConta1)
+    {
+        saldoContaOrigem = saldo1;
+        limiteAtual = limiteCheque1;
+        tipoContaOrigem = tipoConta1;
+    }
+    else if (numeroContaOrigem == numeroConta2)
+    {
+        saldoContaOrigem = saldo2;
+        limiteAtual = limiteCheque2;
+        tipoContaOrigem = tipoConta2;
+    }
+    else if (numeroContaOrigem == numeroConta3)
+    {
+        saldoContaOrigem = saldo3;
+        limiteAtual = limiteCheque3;
+        tipoContaOrigem = tipoConta3;
+    }
+    else if (numeroContaOrigem == numeroConta4)
+    {
+        saldoContaOrigem = saldo4;
+        limiteAtual = limiteCheque4;
+        tipoContaOrigem = tipoConta4;
+    }
+    else
+    {
+        saldoContaOrigem = saldo5;
+        limiteAtual = limiteCheque5;
+        tipoContaOrigem = tipoConta5;
+    }
+
+    // VALIDAR TRANSFERÊNCIA
+    if (validarSaque(tipoContaOrigem, saldoContaOrigem,
+                     limiteAtual, valorTransferencia) == 0)
+    {
+        printf("3 - Saldo insuficiente para o tipo de conta.\n");
+        return; //Cancela a transferência se o saque for inválido
+    }
+
+    if(tipoContaOrigem == 1)
+    {
+        double saldoAntes;
+
+        saldoAntes = saldoContaOrigem;
+
+        saldoContaOrigem -= valorTransferencia;
+
+        if (saldoAntes >= 0 && saldoContaOrigem < 0)
+        {
+            double valorChequeEspecial;
+            double juros;
+
+            valorChequeEspecial = fabs(saldoContaOrigem);
+
+            juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
+
+            saldoContaOrigem -= juros;
+        }
+
+    }
+    else
+    {
+        saldoContaOrigem -= valorTransferencia;
+    }
+
+    //Atualizar saldo da conta de origem 
+    if (numeroContaOrigem == numeroConta1)
+    {
+        saldo1 = saldoContaOrigem;
+    }
+    else if (numeroContaOrigem == numeroConta2)
+    {
+        saldo2 = saldoContaOrigem;
+    }
+    else if (numeroContaOrigem == numeroConta3)
+    {
+        saldo3 = saldoContaOrigem;
+    }
+    else if (numeroContaOrigem == numeroConta4)
+    {
+        saldo4 = saldoContaOrigem;
+    }
+    else
+    {
+        saldo5 = saldoContaOrigem;
+    }
+
+    double valorLiquido;
+
+    int tipoContaDestino;
+
+    if (numeroContaDestino == numeroConta1)
+    {
+            tipoContaDestino = tipoConta1;
+            valorLiquido = calcularDeposito(tipoContaDestino, valorTransferencia);
+
+    }
+    else if (numeroContaDestino == numeroConta2)
+    {       
+            tipoContaDestino = tipoConta2;
+            valorLiquido = calcularDeposito(tipoContaDestino, valorTransferencia);
+
+    }
+    else if (numeroContaDestino == numeroConta3)
+    {
+            tipoContaDestino = tipoConta3;
+            valorLiquido = calcularDeposito(tipoContaDestino, valorTransferencia);
+
+    }
+    else if (numeroContaDestino == numeroConta4)
+    {
+            tipoContaDestino = tipoConta4;
+            valorLiquido = calcularDeposito(tipoContaDestino, valorTransferencia);
+
+    }
+    else
+    {
+            tipoContaDestino = tipoConta5;
+            valorLiquido = calcularDeposito(tipoContaDestino, valorTransferencia);
+
+    }
+
+    double saldoContaDestino;
+    //Atualizar saldo da conta de destino
+    if (numeroContaDestino == numeroConta1)
+    {
+        saldo1+=valorLiquido;
+        saldoContaDestino = saldo1;
+    }
+    else if (numeroContaDestino == numeroConta2)
+    {
+        saldo2+=valorLiquido; 
+        saldoContaDestino = saldo2;
+    }
+    else if (numeroContaDestino == numeroConta3)
+    {
+        saldo3+=valorLiquido;
+        saldoContaDestino = saldo3;
+    }
+    else if (numeroContaDestino == numeroConta4)
+    {
+        saldo4+=valorLiquido;
+        saldoContaDestino = saldo4;
+    }
+    else
+    {
+        saldo5+=valorLiquido;
+        saldoContaDestino = saldo5;
+    }
+
+    printf("=== TRANSFERENCIA REALIZADA COM SUCESSO ===\n");
+    
+    totalSacado += valorTransferencia;
+    totalDepositado += valorLiquido;
+    totalOperacoes++;
+
+    printf("O saldo atual da conta origem é: %.2lf\n", saldoContaOrigem);
+    printf("O saldo atual na conta destino é: %.2lf\n",saldoContaDestino);
+
 }
 
 void rendimentoMensal(int NumConta,int tipoConta, double *saldo)
