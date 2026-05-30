@@ -262,6 +262,7 @@ int main()
             }
             break;
         }
+<<<<<<< HEAD
         case 3: 
         {           
             int numeroContaOrigem, numeroContaDestino;
@@ -287,6 +288,35 @@ int main()
             }
 }
             break;
+=======
+        case 3:
+{
+    int numeroContaOrigem, numeroContaDestino;
+
+    printf("Digite o numero da conta de origem: ");
+    scanf("%d", &numeroContaOrigem);
+
+    printf("Digite o numero da conta de destino: ");
+    scanf("%d", &numeroContaDestino);
+
+    if ((numeroContaOrigem != numeroContaDestino) &&
+        (numeroContaDestino == numeroConta1 || numeroContaDestino == numeroConta2 ||
+         numeroContaDestino == numeroConta3 || numeroContaDestino == numeroConta4 ||
+         numeroContaDestino == numeroConta5) &&
+        (numeroContaOrigem == numeroConta1 || numeroContaOrigem == numeroConta2 ||
+         numeroContaOrigem == numeroConta3 || numeroContaOrigem == numeroConta4 ||
+         numeroContaOrigem == numeroConta5))
+    {
+
+        transferir(numeroContaOrigem, numeroContaDestino);
+    }else{
+        printf("Conta de origem ou destino invalida, ou as contas sao iguais. Tente novamente.\n");
+    }
+
+    break;
+}
+ // Aqui ta com erro...
+>>>>>>> f142593b75579226bdf4f549f271f079361d482f
         case 4:
             rendimentoMensal(numeroConta1,tipoConta1,&saldo1);
             rendimentoMensal(numeroConta2,tipoConta2,&saldo2);
@@ -490,6 +520,7 @@ void sacar(int tipoConta, int numeroConta)
         limiteAtual = limiteCheque5;
     }
 
+<<<<<<< HEAD
     // CONTA CORRENTE
     if (tipoConta == 1)
     {
@@ -543,6 +574,40 @@ void sacar(int tipoConta, int numeroConta)
         saldoAtual -= saque;
 
     }
+=======
+    // Validar saque
+if (validarSaque(tipoConta, saldoAtual, limiteAtual, saque) == 0)
+{
+    printf("3 - Saldo insuficiente para o tipo de conta.\n");
+    return;
+}
+
+// CONTA CORRENTE
+if (tipoConta == 1)
+{
+    double saldoAntes;
+
+    saldoAntes = saldoAtual;
+
+    saldoAtual -= saque;
+
+    if (saldoAntes >= 0 && saldoAtual < 0)
+    {
+        double valorChequeEspecial;
+        double juros;
+
+        valorChequeEspecial = fabs(saldoAtual);
+
+        juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
+
+        saldoAtual -= juros;
+    }
+}
+else
+{
+    saldoAtual -= saque;
+}
+>>>>>>> f142593b75579226bdf4f549f271f079361d482f
 
     // Atualizar saldo REAL da conta
     if (numeroConta == numeroConta1)
@@ -867,6 +932,7 @@ int CalcularSaldo(double saldo) {
     
 }
 
+<<<<<<< HEAD
 void exibirRelatorioGeral()
 {
     double mediaSaldos = (saldo1 + saldo2 + saldo3 + saldo4 + saldo5) / NUM_CONTAS;
@@ -999,3 +1065,55 @@ int Teste(){
      return 0;
 }
      
+=======
+// Funçã para verificar se o saque é valido, considerando o tipo da conta, o saldo atual e o limite de cheque especial (se aplicável), nesse caso, a função analisa retorna 0 para saque inválido e 1 para saque válido. Essa função é utilizada tanto para validar saques quanto transferências, já que ambas as operações envolvem a retirada de dinheiro da conta de origem.
+int validarSaque(int tipoConta, double saldoAtual,
+                 double limiteAtual, double saque)
+{
+    if (tipoConta == 1)
+    {
+        if (saque > (saldoAtual + limiteAtual))
+        {
+            return 0;
+        }
+    }
+    else if (tipoConta == 2)
+    {
+        if (saque > saldoAtual)
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        if ((saldoAtual - saque) < -LIMITE_NEGATIVO_SALARIO)
+        {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
+double calcularDeposito(int tipoConta, double valor){
+    if (tipoConta == 1)
+{
+    return valor * (1 - TAXA_CORRENTE);
+}
+else if (tipoConta == 2)
+{
+    return valor;
+}
+else
+{
+    if (valor >= SALARIO_MINIMO)
+    {
+        return valor;
+    }
+    else
+    {
+        return valor * (1 - TAXA_SALARIO);
+    }
+}
+}
+>>>>>>> f142593b75579226bdf4f549f271f079361d482f
