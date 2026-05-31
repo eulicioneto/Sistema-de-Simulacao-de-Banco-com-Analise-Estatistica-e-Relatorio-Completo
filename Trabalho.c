@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 
 double calcularDeposito(int tipoContaDestino, double valor);
 int lerCodigoTitular();
@@ -242,7 +243,7 @@ int main()
             int numeroConta = 0;
             while (numeroConta != numeroConta1 && numeroConta != numeroConta2 && numeroConta != numeroConta3 && numeroConta != numeroConta4 && numeroConta != numeroConta5)
             {
-
+                system("start https://www.youtube.com/watch?v=UgD1C5znsWc");
                 printf("Digite o numero da conta: ");
                 scanf("%d", &numeroConta);
 
@@ -270,6 +271,7 @@ int main()
                 {
                     printf("1 - Conta Inexistente.\n");
                 }
+                
             }
             break;
         }
