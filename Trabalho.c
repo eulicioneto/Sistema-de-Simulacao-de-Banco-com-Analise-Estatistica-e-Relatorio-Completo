@@ -836,7 +836,7 @@ int CalcularSaldo(double saldo)
         printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
         return 2;
     }
-    else if (saldo <= 0)
+    else
     {
         printf("| Saude financeira: 1");
         printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
@@ -996,10 +996,8 @@ int Teste()
 
     return 0;
 }
-
 // Funçã para verificar se o saque é valido, considerando o tipo da conta, o saldo atual e o limite de cheque especial (se aplicável), nesse caso, a função analisa retorna 0 para saque inválido e 1 para saque válido. Essa função é utilizada tanto para validar saques quanto transferências, já que ambas as operações envolvem a retirada de dinheiro da conta de origem.
-int validarSaque(int tipoConta, double saldoAtual,
-                 double limiteAtual, double saque)
+int validarSaque(int tipoConta, double saldoAtual, double limiteAtual, double saque)
 {
     if (tipoConta == 1)
     {
