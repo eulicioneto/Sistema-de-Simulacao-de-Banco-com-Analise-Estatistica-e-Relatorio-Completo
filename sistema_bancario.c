@@ -1,5 +1,5 @@
-/*
-    Alunos: Eulício Batista Neto, Gustavo das Neves e Arthur Gavião
+/* 
+    Alunos: Eulício Batista Neto, Gustavo das Neves Pinheiro e Arthur Souza Sampaio Gavião
     Turma: Sistemas de Informação - 2026.1
     Data: 02/06/2026
     Descrição: O programa simula um sistema bancário para gerenciar contas correntes, poupança e salário. Ele permite realizar operações como depósito, saque, transferência entre contas, aplicação de rendimento mensal e exibição de extratos e relatórios gerais. O programa é estruturado em funções para facilitar a organização e reutilização do código.
@@ -20,18 +20,17 @@ double lerLimite(int tipoConta);
 int menuPrincipal();
 double depositar(int tipoConta);
 void sacar(int tipoConta, int numeroConta);
-void transferir(int tipoContaOrigem, int tipoContaDestino);
-void rendimentoMensal();
+void transferir(int numeroContaOrigem, int numeroContaDestino);
+void rendimentoMensal(int NumConta, int tipoConta, double *saldo);
 void exibirExtrato(int numeroConta);
 int CalcularSaldo(double saldo);
 void exibirRelatorioGeral();
 void relatorioFinal();
 void verificarTipoConta(int tipoConta, int *contasCorrente, int *contasPoupanca, int *contasSalario);
-int Teste();
 double exibirConta(int numeroConta, int codTitular, double saldoInicial, double saldoAtual);
 
 // Constantes
-#define NUM_CONTAS 5 // Essa constante ainda nao foi utilizada!!!
+#define NUM_CONTAS 5 // Número total de contas no sistema
 #define SALARIO_MINIMO 1412.00
 #define LIMITE_NEGATIVO_SALARIO 500.00
 #define JUROS_CHEQUE_ESPECIAL 0.085
@@ -164,9 +163,10 @@ int main()
             break;
         case 1:
         {
-            int numeroConta;
+            int numeroConta = 0;
             double valor;
 
+        while(numeroConta != numeroConta1 && numeroConta != numeroConta2 && numeroConta != numeroConta3 && numeroConta != numeroConta4 && numeroConta != numeroConta5){
             printf("Digite o numero da conta de destino: ");
             scanf("%d", &numeroConta);
 
@@ -237,50 +237,53 @@ int main()
             }
             else
             {
-                printf("Numero Invalido.\n");
+                printf("1 - Conta inexistente.\n");
             }
+        }
+
             break;
         }
         case 2:
-        {
-            int numeroConta = 0;
-            while (numeroConta != numeroConta1 && numeroConta != numeroConta2 && numeroConta != numeroConta3 && numeroConta != numeroConta4 && numeroConta != numeroConta5)
-            {
-                // system("start https://www.youtube.com/watch?v=UgD1C5znsWc");
-                printf("Digite o numero da conta: ");
-                scanf("%d", &numeroConta);
+{
+    int numeroConta;
 
-                if (numeroConta == numeroConta1)
-                {
-                    sacar(tipoConta1, numeroConta1);
-                }
-                else if (numeroConta == numeroConta2)
-                {
-                    sacar(tipoConta2, numeroConta2);
-                }
-                else if (numeroConta == numeroConta3)
-                {
-                    sacar(tipoConta3, numeroConta3);
-                }
-                else if (numeroConta == numeroConta4)
-                {
-                    sacar(tipoConta4, numeroConta4);
-                }
-                else if (numeroConta == numeroConta5)
-                {
-                    sacar(tipoConta5, numeroConta5);
-                }
-                else
-                {
-                    printf("1 - Conta Inexistente.\n");
-                }
-            }
-            break;
-        }
+    do{
+
+    printf("Digite o numero da conta: ");
+    scanf("%d", &numeroConta);
+
+    if (numeroConta == numeroConta1)
+    {
+        sacar(tipoConta1, numeroConta1);
+    }
+    else if (numeroConta == numeroConta2)
+    {
+        sacar(tipoConta2, numeroConta2);
+    }
+    else if (numeroConta == numeroConta3)
+    {
+        sacar(tipoConta3, numeroConta3);
+    }
+    else if (numeroConta == numeroConta4)
+    {
+        sacar(tipoConta4, numeroConta4);
+    }
+    else if (numeroConta == numeroConta5)
+    {
+        sacar(tipoConta5, numeroConta5);
+    }
+    else
+    {
+        printf("1 - Conta inexistente.\n");
+    }
+    }while(numeroConta != numeroConta1 && numeroConta != numeroConta2 && numeroConta != numeroConta3 && numeroConta != numeroConta4 && numeroConta != numeroConta5);
+
+    break;
+}
         case 3:
         {
             int numeroContaOrigem, numeroContaDestino;
-
+            do{
             printf("Digite o numero da conta de origem: ");
             scanf("%d", &numeroContaOrigem);
 
@@ -302,6 +305,13 @@ int main()
             {
                 printf("Conta de origem ou destino invalida, ou as contas sao iguais. Tente novamente.\n");
             }
+        }while((numeroContaOrigem == numeroContaDestino) ||
+               (numeroContaDestino != numeroConta1 && numeroContaDestino != numeroConta2 &&
+                numeroContaDestino != numeroConta3 && numeroContaDestino != numeroConta4 &&
+                numeroContaDestino != numeroConta5) ||
+               (numeroContaOrigem != numeroConta1 && numeroContaOrigem != numeroConta2 &&
+                numeroContaOrigem != numeroConta3 && numeroContaOrigem != numeroConta4 &&
+                numeroContaOrigem != numeroConta5));
         }
         break;
 
@@ -313,11 +323,14 @@ int main()
             rendimentoMensal(numeroConta5, tipoConta5, &saldo5);
 
             break;
-        case 5:
+        case 5: {
+        int numeroConta;
+        do{
             printf("\n Digite o numero da conta: ");
-            int tipoConta = 0;
-            scanf("%d", &tipoConta);
-            exibirExtrato(tipoConta);
+            scanf("%d", &numeroConta);
+            exibirExtrato(numeroConta);
+        }while(numeroConta != numeroConta1 && numeroConta != numeroConta2 && numeroConta != numeroConta3 && numeroConta != numeroConta4 && numeroConta != numeroConta5);
+        }
             break;
         case 6:
             exibirRelatorioGeral();
@@ -325,6 +338,7 @@ int main()
         default:
             printf("Opcao Invalida, digite novamente.\n");
             break;
+
         }
     } while (opcao != 0);
 
@@ -393,7 +407,7 @@ double lerSaldoInicial()
         scanf("%lf", &saldo);
         if (saldo <= 0)
         {
-            printf("O saldo precisa ser estritamente maior que zero!\n");
+            printf("2 - Valor Invalido.\n");
         }
     } while (saldo <= 0);
     return saldo;
@@ -410,7 +424,7 @@ double lerLimite(int tipoConta)
             scanf("%lf", &limite);
             if (limite < 0)
             {
-                printf("Limite invalido! O limite nao pode ser negativo.\n");
+                printf("2 - Valor Invalido.\n");
             }
         } while (limite < 0);
         return limite;
@@ -435,7 +449,7 @@ double depositar(int tipoConta)
 
         if (deposito <= 0)
         {
-            printf("Valor Invalido.\n");
+            printf("2 - Valor Invalido.\n");
         }
 
     } while (deposito <= 0);
@@ -471,7 +485,7 @@ void sacar(int tipoConta, int numeroConta)
     } while (saque <= 0);
 
     // Identificar saldo e limite da conta
-    if (numeroConta == numeroConta1) // Fazer uma funcao para identificar qual é a conta, para nao precisar ficar repetindo esse if-else toda hora
+    if (numeroConta == numeroConta1) 
     {
         saldoAtual = saldo1;
         limiteAtual = limiteCheque1;
@@ -505,25 +519,21 @@ void sacar(int tipoConta, int numeroConta)
 
     // CONTA CORRENTE
     if (tipoConta == 1)
+{
+    saldoAtual -= saque;
+
+    if (saldoAtual < 0)
     {
-        double saldoAntes;
+        double valorChequeEspecial;
+        double juros;
 
-        saldoAntes = saldoAtual;
+        valorChequeEspecial = fabs(saldoAtual);
 
-        saldoAtual -= saque;
+        juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
 
-        if (saldoAntes >= 0 && saldoAtual < 0)
-        {
-            double valorChequeEspecial;
-            double juros;
-
-            valorChequeEspecial = fabs(saldoAtual);
-
-            juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
-
-            saldoAtual -= juros;
-        }
+        saldoAtual -= juros;
     }
+}
     else
     {
         saldoAtual -= saque;
@@ -614,7 +624,7 @@ void transferir(int numeroContaOrigem, int numeroContaDestino)
         tipoContaOrigem = tipoConta5;
     }
 
-    // VALIDAR TRANSFERÊNCIA
+    // VALIDAR TRANSFERÊNCIA ou Saque
     if (validarSaque(tipoContaOrigem, saldoContaOrigem,
                      limiteAtual, valorTransferencia) == 0)
     {
@@ -624,23 +634,19 @@ void transferir(int numeroContaOrigem, int numeroContaDestino)
 
     if (tipoContaOrigem == 1)
     {
-        double saldoAntes;
+    saldoContaOrigem -= valorTransferencia;
 
-        saldoAntes = saldoContaOrigem;
+    if (saldoContaOrigem < 0)
+    {
+        double valorChequeEspecial;
+        double juros;
 
-        saldoContaOrigem -= valorTransferencia;
+        valorChequeEspecial = fabs(saldoContaOrigem);
 
-        if (saldoAntes >= 0 && saldoContaOrigem < 0)
-        {
-            double valorChequeEspecial;
-            double juros;
+        juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
 
-            valorChequeEspecial = fabs(saldoContaOrigem);
-
-            juros = valorChequeEspecial * JUROS_CHEQUE_ESPECIAL;
-
-            saldoContaOrigem -= juros;
-        }
+        saldoContaOrigem -= juros;
+    }
     }
     else
     {
@@ -764,7 +770,7 @@ void rendimentoMensal(int NumConta, int tipoConta, double *saldo)
     // Saldo negativo -> mora de 3%
     if (*saldo < 0)
     {
-        valorAplicado = fabs(*saldo * JUROS_MORA);
+        valorAplicado = fabs(*saldo * JUROS_MORA); 
 
         *saldo *= (1 + JUROS_MORA);
 
@@ -846,7 +852,7 @@ void exibirExtrato(int numeroConta)
     }
     else
     {
-        printf("Numero de conta nao existente\n");
+        printf("1 - Conta Inexistente.\n");
     }
 }
 
@@ -857,7 +863,7 @@ int CalcularSaldo(double saldo)
     if (saldo >= 10 * SALARIO_MINIMO)
     {
         printf("| Saude financeira: 4");
-        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        printf("\n\n1=CRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
         return 4;
     }
     else if (saldo >= 3 * SALARIO_MINIMO)
@@ -869,13 +875,13 @@ int CalcularSaldo(double saldo)
     else if (saldo >= 0)
     {
         printf("| Saude financeira: 2");
-        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        printf("\n\n1=CRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
         return 2;
     }
     else
     {
         printf("| Saude financeira: 1");
-        printf("\n\nCRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
+        printf("\n\n1=CRITICA | 2=REGULAR | 3=BOA | 4=EXCELENTE");
         return 1;
     }
 }
@@ -913,7 +919,7 @@ void exibirRelatorioGeral()
     {
         printf("-------------------------------\n");
         printf("Codigo Titular da conta com maior saldo: %d\n", codTitular1);
-        printf("Saldo: RR$%.2f\n", saldo1);
+        printf("Saldo: R$%.2f\n", saldo1);
         printf("-------------------------------\n");
     }
     else if (saldo2 >= saldo1 && saldo2 >= saldo3 && saldo2 >= saldo4 && saldo2 >= saldo5)
@@ -1185,4 +1191,4 @@ void desvalorizacaoPercentual(double variacao1, double variacao2, double variaca
     {
         printf("Código do titular com maior desvalorização percentual: %d\n", codTitular5);
     }
-}
+} 
